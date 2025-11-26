@@ -34,10 +34,10 @@ const logoutAccount = async () => {
             <router-link to="/join">회원가입</router-link>
           </template>
           <template v-else>
-            <a @click="logoutAccount()">로그아웃</a>
             <router-link to="/orders">주문 내역</router-link>
             <router-link to="/cart">장바구니</router-link>
             <router-link to="/myPage">마이페이지</router-link>
+            <a @click="logoutAccount()">로그아웃</a>
           </template>
         </div>
       </div>
