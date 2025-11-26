@@ -1,0 +1,54 @@
+package com.ssg.noranekoshop.account.helper;
+
+import com.ssg.noranekoshop.account.dto.AccountJoinRequests;
+import com.ssg.noranekoshop.account.dto.AccountLoginRequests;
+import com.ssg.noranekoshop.account.etc.AccountConstants;
+import com.ssg.noranekoshop.common.util.HttpUtils;
+import com.ssg.noranekoshop.member.entity.Member;
+import com.ssg.noranekoshop.member.service.MemberService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+@Component
+@RequiredArgsConstructor
+public class SessionAccountHelper implements  AccountHelper {
+
+    private final MemberService memberService;
+
+    @Override
+    public void join(AccountJoinRequests joinReq) {
+        memberService.save(joinReq.getName(), joinReq.getLoginId(), joinReq.getLoginPw(), joinReq.getPhone(), joinReq.getAddress());
+    }
+
+    @Override
+    public String login(AccountLoginRequests loginReq, HttpServletRequest request, HttpServletResponse response) {
+        Member member = memberService.find(loginReq.getLoginId(), loginReq.getLoginPw());
+
+        // 회원 데이터가 없으면
+        if (member == null) {
+            return null;
+        }
+        HttpUtils.setSession(request, AccountConstants.Member_ID_NAME, member.getId());
+        return member.getLoginId().toString();
+    }
+
+    // 회원 아이디 조회
+    @Override
+    public Integer getMemberId(HttpServletRequest request) {
+        Object memberId = HttpUtils.getSession(request, AccountConstants.Member_ID_NAME);
+        if(memberId != null) { return (int) memberId; }
+        return null;
+    }
+
+    @Override
+    public boolean isLoggedIn(HttpServletRequest request) {
+        return getMemberId(request) != null;
+    }
+
+    @Override
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
+        HttpUtils.removeSession(request, AccountConstants.Member_ID_NAME);
+    }
+}
