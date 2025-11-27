@@ -72,9 +72,12 @@ const generateConfig = () => { // ③
 };
 
 export default {
-    get(url, params) { // ④ Axios 객체의 메서드를 호출하여 HTTP GET 요청을 한다. 호출시 generateConfig메서드를 호출해서 인수로 입력한다.
+    // ④ Axios 객체의 메서드를 호출하여 HTTP GET 요청을 한다. 호출시 generateConfig메서드를 호출해서 인수로 입력한다.
+    get(url, params) {
         const config = generateConfig();
-        config.params = params;
+        if (params) {
+            config.params = params;  // params를 config.params에 직접 할당
+        }
         return instance.get(url, config);
     },
     post(url, params) { // ⑤  Axios 객체의 메서드를 호출하여 HTTP post 요청을 한다. 호출시 generateConfig메서드를 호출해서 인수로 입력한다.

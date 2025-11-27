@@ -10,12 +10,22 @@ const state = reactive({ // ① 반응형상태, 내부에 상품 목록을 저�
 
 // 커스텀 생성 훅
 (async function onCreated() { // ② 상품서비스의 상품목록을 조회하는 getItems() 호출하고 리턴 데이터를 state.items에 입력한다.
-  const res = await getItems();
+  const res = await getItems(0, 12); // page, size 전달
 
   if (res.status === 200) {
-    state.items = res.data;
+    state.items = res.data.content;  // content 배열 추출
+    state.totalPages = res.data.totalPages;  // 전체 페이지 수
+    state.currentPage = res.data.number;  // 현재 페이지 (0부터 시작)
   }
 })();
+async function loadItems(page) {
+  const res = await getItems(page, 12);
+  if (res.status === 200) {
+    state.items = res.data.content;
+    state.totalPages = res.data.totalPages;
+    state.currentPage = res.data.number;
+  }
+}
 </script>
 
 <template>
@@ -27,6 +37,27 @@ const state = reactive({ // ① 반응형상태, 내부에 상품 목록을 저�
             <Card :item="item"/> <!-- ⑦ item 속성에 각 상품 데이터(item)을 입력해 전달-->
           </div>
         </div>
+        <nav aria-label="Page navigation">
+          <ul class="pagination justify-content-center">
+            <!-- 이전 버튼 -->
+            <li class="page-item" :class="{disabled: state.currentPage === 0}">
+              <button class="page-link" @click="loadItems(state.currentPage - 1)">이전</button>
+            </li>
+
+            <!-- 페이지 번호 버튼 -->
+            <li class="page-item"
+                v-for="i in state.totalPages"
+                :key="i"
+                :class="{active: state.currentPage === i-1}">
+              <button class="page-link" @click="loadItems(i-1)">{{ i }}</button>
+            </li>
+
+            <!-- 다음 버튼 -->
+            <li class="page-item" :class="{disabled: state.currentPage === state.totalPages-1}">
+              <button class="page-link" @click="loadItems(state.currentPage + 1)">다음</button>
+            </li>
+          </ul>
+        </nav>
       </div>
     </div>
   </div>

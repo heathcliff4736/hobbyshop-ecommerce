@@ -37,13 +37,13 @@ const remove = async (itemId) => { // ③
     <div class="container"> <!-- ⑤ -->
       <template v-if="state.items.length">
         <ul class="items"> <!-- ⑥ -->
-          <li v-for="i in state.items">
+          <li v-for="i in state.items" style="position: relative;">
             <img :alt="`상품 사진(${i.name})`" :src="i.imgPath"/>
             <b class="name">{{ i.name }}</b>
             <span class="price">
             {{ (i.price - i.price * i.discountPer / 100).toLocaleString() }}원
           </span>
-            <span class="remove float-end" @click="remove(i.id)" title="삭제">&times;</span>
+            <span class="remove" @click="remove(i.id)" title="삭제">&times;</span>
           </li>
         </ul>
         <div class="act">
@@ -69,8 +69,10 @@ const remove = async (itemId) => { // ③
     }
 
     img { // ⑧
-      width: 150px;
-      height: 150px;
+      width: 145px;        // 최대 너비
+      height: auto;        // 높이는 비율에 맞춰 자동
+      max-height: 150px;   // 최대 높이
+      object-fit: contain; // 이미지 비율 유지, 빈 공간은 비우기
     }
 
     .name {
@@ -82,6 +84,9 @@ const remove = async (itemId) => { // ③
     }
 
     .remove {
+      position: absolute;
+      top: 0;
+      right: 0;
       cursor: pointer;
       font-size: 30px;
       padding: 5px 15px;

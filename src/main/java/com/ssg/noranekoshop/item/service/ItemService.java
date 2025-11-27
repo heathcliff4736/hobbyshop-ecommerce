@@ -1,14 +1,18 @@
 package com.ssg.noranekoshop.item.service;
 
 import com.ssg.noranekoshop.item.dto.ItemRead;
+import com.ssg.noranekoshop.item.entity.Item;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface ItemService {
 
-    // 전체 상품 ㅁ목록 조회 리턴타입으로 상품 조회 DTO 리스트
+    // 전체 상품 목록 조회 리턴타입으로 상품 조회 DTO 리스트
     List<ItemRead> findAll();
     
     // 특정 상품 목록 조회 (특정 아이디 리스트로 조회) 매개변수로 상품의 아이디 리스트를 받아서 해당 아이디의 상품정보를 조회
     List<ItemRead> findAll(List<Integer> ids);
+
+    Page<ItemRead> getItems(int page, int size);
 }
