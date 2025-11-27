@@ -3,6 +3,7 @@
 import {reactive} from "vue";
 import {login} from "@/services/accountService";
 import {useRouter} from "vue-router";
+import {useAccountStore} from "@/stores/account"; // ① 계정 스토어 객체 생성 시 필요한 메서드 임포트
 
 // 반응형 상태
 const state = reactive({ // ①
@@ -15,20 +16,23 @@ const state = reactive({ // ①
 // 라우터 객체
 const router = useRouter(); // ②
 
+// 계정 스토어
+const accountStore = useAccountStore(); // ② 계정 스토어 객체
+
 // 로그인 데이터 제출
-const submit = async () => { // ③
-  try {
-    const res = await login(state.form);
+const submit = async () => {
+  const res = await login(state.form);
 
-    if (res.status === 200) {
+  switch (res.status) {
+    case 200:
+      accountStore.setAccessToken(res.data); // ③ 로그인 성공시 응답받은 데이터(액세스 토큰)를 계정 스토어의 액세스 토큰에 입력(저장)
       await router.push("/");
-    }
-  } catch (error) {
-    // 에러 메시지 alert로 표시
-    alert(error.response?.data?.message || "로그인에 실패했습니다.");
+      break;
 
-    // 비밀번호 초기화
-    state.form.loginPw = "";
+    case 404:
+      window.alert("입력하신 정보와 일치하는 회원이 없습니다.")
+      state.form.loginPw = "";
+      break;
   }
 };
 </script>
