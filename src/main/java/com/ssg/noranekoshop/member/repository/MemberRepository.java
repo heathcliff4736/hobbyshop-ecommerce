@@ -12,8 +12,8 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
     // id와 패스워드로 회원 정보를 조회
     Optional<Member> findByLoginIdAndLoginPw(String loginId, String loginPw);
 
-    // status 추가 - 활성 회원만 조회되도록
-    Optional<Member> findByLoginIdAndLoginPwAndStatus(String loginId, String loginPw, MemberStatus status);
+    // 아이디로 회원 정보 조회
+    Optional<Member> findByLoginId(String loginId);
 
     // 이메일 중복 검사
     boolean existsByLoginId(String loginId);

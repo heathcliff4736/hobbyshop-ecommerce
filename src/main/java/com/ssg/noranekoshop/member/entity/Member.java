@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Entity
-@Table(name="members")
+@Table(name = "members")
 public class Member {
 
     @Id
@@ -21,8 +21,11 @@ public class Member {
     @Column(length = 50, nullable = false, unique = true)
     private String loginId;
 
-    @Column(length = 100, nullable = false)
+    @Column(length = 64, nullable = false)
     private String loginPw;
+
+    @Column(length = 16, nullable = false)
+    private String loginPwSalt;
 
     @Column(length = 20, nullable = true)
     private String phone;
@@ -42,12 +45,14 @@ public class Member {
     @Column(nullable = true)
     private LocalDateTime deleted; // 탈퇴 시간
 
-    public Member() {}
+    public Member() {
+    }
 
-    public Member(String name, String loginId, String loginPw, String phone, String address) {
+    public Member(String name, String loginId, String loginPw, String loginPwSalt, String phone, String address) {
         this.name = name;
         this.loginId = loginId;
         this.loginPw = loginPw;
+        this.loginPwSalt = loginPwSalt;
         this.phone = phone;
         this.address = address;
     }

@@ -1,7 +1,7 @@
 package com.ssg.noranekoshop.account.helper;
 
-import com.ssg.noranekoshop.account.dto.AccountJoinRequests;
-import com.ssg.noranekoshop.account.dto.AccountLoginRequests;
+import com.ssg.noranekoshop.account.dto.AccountJoinRequest;
+import com.ssg.noranekoshop.account.dto.AccountLoginRequest;
 import com.ssg.noranekoshop.account.etc.AccountConstants;
 import com.ssg.noranekoshop.common.util.HttpUtils;
 import com.ssg.noranekoshop.member.entity.Member;
@@ -18,12 +18,12 @@ public class SessionAccountHelper implements  AccountHelper {
     private final MemberService memberService;
 
     @Override
-    public void join(AccountJoinRequests joinReq) {
+    public void join(AccountJoinRequest joinReq) {
         memberService.save(joinReq.getName(), joinReq.getLoginId(), joinReq.getLoginPw(), joinReq.getPhone(), joinReq.getAddress());
     }
 
     @Override
-    public String login(AccountLoginRequests loginReq, HttpServletRequest request, HttpServletResponse response) {
+    public String login(AccountLoginRequest loginReq, HttpServletRequest request, HttpServletResponse response) {
         Member member = memberService.find(loginReq.getLoginId(), loginReq.getLoginPw());
 
         // 회원 데이터가 없으면

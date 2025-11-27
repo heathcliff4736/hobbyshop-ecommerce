@@ -11,6 +11,7 @@ import com.ssg.noranekoshop.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.ssg.noranekoshop.common.util.EncryptionUtils; // ① 암호화 유틸리티 클래스를 임포트한다.
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,6 +74,11 @@ public class BaseOrderService implements OrderService {
 
         // 주문 요청에 최종 결제 금액 입력
         orderReq.setAmount(amount);
+
+        // 결제 수단이 카드일 때 카드 번호 암호화
+        if ("card".equals(orderReq.getPayment())) {
+            orderReq.setCardNumber(EncryptionUtils.encrypt(orderReq.getCardNumber()));
+        }
 
         // 주문 저장
         Order order = orderRepository.save(orderReq.toEntity(memberId));

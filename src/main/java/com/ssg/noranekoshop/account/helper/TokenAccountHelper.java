@@ -1,7 +1,7 @@
 package com.ssg.noranekoshop.account.helper;
 
-import com.ssg.noranekoshop.account.dto.AccountJoinRequests;
-import com.ssg.noranekoshop.account.dto.AccountLoginRequests;
+import com.ssg.noranekoshop.account.dto.AccountJoinRequest;
+import com.ssg.noranekoshop.account.dto.AccountLoginRequest;
 import com.ssg.noranekoshop.account.etc.AccountConstants;
 import com.ssg.noranekoshop.block.Service.BlockService;
 import com.ssg.noranekoshop.common.util.HttpUtils;
@@ -47,13 +47,13 @@ public class TokenAccountHelper implements AccountHelper {
 
     // 회원가입
     @Override
-    public void join(AccountJoinRequests joinReq) { // ⑨
+    public void join(AccountJoinRequest joinReq) { // ⑨
         memberService.save(joinReq.getName(), joinReq.getLoginId(), joinReq.getLoginPw(), joinReq.getPhone(), joinReq.getAddress());
     }
 
     // 로그인
     @Override
-    public String login(AccountLoginRequests loginReq, HttpServletRequest req, HttpServletResponse res) { // ⑨
+    public String login(AccountLoginRequest loginReq, HttpServletRequest req, HttpServletResponse res) { // ⑨
         Member member = memberService.find(loginReq.getLoginId(), loginReq.getLoginPw());
 
         // 회원 데이터가 없으면

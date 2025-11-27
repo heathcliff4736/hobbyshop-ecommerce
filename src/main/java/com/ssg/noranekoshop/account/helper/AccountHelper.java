@@ -1,17 +1,17 @@
 package com.ssg.noranekoshop.account.helper;
 
-import com.ssg.noranekoshop.account.dto.AccountJoinRequests;
-import com.ssg.noranekoshop.account.dto.AccountLoginRequests;
+import com.ssg.noranekoshop.account.dto.AccountJoinRequest;
+import com.ssg.noranekoshop.account.dto.AccountLoginRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public interface AccountHelper {
 
     // 회원가입을 처리하는 메서드
-    void join(AccountJoinRequests joinReq);
+    void join(AccountJoinRequest joinReq);
 
     // 로그인
-    String login(AccountLoginRequests loginReq, HttpServletRequest request, HttpServletResponse response);
+    String login(AccountLoginRequest loginReq, HttpServletRequest request, HttpServletResponse response);
 
     // 회원 아이디 조회
     Integer getMemberId(HttpServletRequest request);

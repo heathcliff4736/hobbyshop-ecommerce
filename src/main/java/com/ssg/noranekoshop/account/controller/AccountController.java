@@ -1,7 +1,7 @@
 package com.ssg.noranekoshop.account.controller;
 
-import com.ssg.noranekoshop.account.dto.AccountJoinRequests;
-import com.ssg.noranekoshop.account.dto.AccountLoginRequests;
+import com.ssg.noranekoshop.account.dto.AccountJoinRequest;
+import com.ssg.noranekoshop.account.dto.AccountLoginRequest;
 import com.ssg.noranekoshop.account.etc.AccountConstants;
 import com.ssg.noranekoshop.account.helper.AccountHelper;
 import com.ssg.noranekoshop.block.Service.BlockService;
@@ -27,7 +27,7 @@ public class AccountController {
 
     // 회원가입
     @PostMapping("/api/account/join")
-    public ResponseEntity<?> join(@RequestBody AccountJoinRequests joinReq) {
+    public ResponseEntity<?> join(@RequestBody AccountJoinRequest joinReq) {
         // 입력값이 비어있다면
         if (joinReq.getName() == null || joinReq.getLoginId() == null || joinReq.getLoginPw() == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -41,7 +41,7 @@ public class AccountController {
     @PostMapping("/api/account/login")
     public ResponseEntity<?> login(HttpServletRequest request,
                                    HttpServletResponse response,
-                                   @RequestBody AccountLoginRequests loginReq) {
+                                   @RequestBody AccountLoginRequest loginReq) {
         if (loginReq.getLoginId() == null || loginReq.getLoginPw() == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

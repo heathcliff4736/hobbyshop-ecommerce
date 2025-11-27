@@ -4,6 +4,7 @@ import com.ssg.noranekoshop.exception.DuplicateMemberException;
 import com.ssg.noranekoshop.member.entity.Member;
 import com.ssg.noranekoshop.member.entity.MemberStatus;
 import com.ssg.noranekoshop.member.repository.MemberRepository;
+import com.ssg.noranekoshop.common.util.HashUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,9 +19,16 @@ public class BaseMemberService implements MemberService {
 
     @Override
     @Transactional
-    public void save(String name, String login_id, String login_pw, String phone, String address) {
+    public void save(String name, String loginId, String loginPw, String phone, String address) {
+
+        // 솔트 생성
+        String loginPwSalt = HashUtils.generateSalt(16);
+
+        // 입력 패스워드에 솔트를 적용
+        String loginPwSalted = HashUtils.generateHash(loginPw, loginPwSalt);
+
         // 아이디 중복 체크
-        if (memberRepository.existsByLoginId(login_id)) {
+        if (memberRepository.existsByLoginId(loginId)) {
             throw new DuplicateMemberException("이미 사용 중인 이메일입니다.");
         }
 
@@ -29,37 +37,38 @@ public class BaseMemberService implements MemberService {
             throw new DuplicateMemberException("이미 등록된 전화번호입니다.");
         }
 
-        memberRepository.save(new Member(name, login_id, login_pw, phone, address));
+        memberRepository.save(new Member(name, loginId, loginPwSalted, loginPwSalt, phone, address));
     }
 
     @Override
-    public Member find(String login_id, String login_pw) {
-        Optional<Member> anymember = memberRepository.findByLoginIdAndLoginPw(login_id, login_pw);
-//        Optional<Member> member = memberRepository.findByLoginIdAndLoginPwAndStatus(
-//                login_id,
-//                login_pw,
-//                MemberStatus.ACTIVE
-//        );
+    public Member find(String loginId, String loginPw) {
+        Optional<Member> memberOptional = memberRepository.findByLoginId(loginId);
 
-        if (anymember.isEmpty()) {
-            throw new RuntimeException("아이디 또는 비밀번호가 일치하지 않습니다.");
+        // 회원 데이터가 있으면
+        if (memberOptional.isPresent()) {
+            Member member = memberOptional.get();
+
+            if (member.getStatus() == MemberStatus.ACTIVE) {
+                // 솔트 조회
+                String loginPwSalt = memberOptional.get().getLoginPwSalt();
+
+                // 입력 패스워드에 솔트를 적용
+                String loginPwSalted = HashUtils.generateHash(loginPw, loginPwSalt);
+
+                // 저장된 회원 로그인 패스워드와 일치한다면
+                if (member.getLoginPw().equals(loginPwSalted)) {
+                    return member;
+                }
+            } else if (member.getStatus() == MemberStatus.SUSPENDED) {
+                throw new RuntimeException("정지된 회원입니다. 고객센터에 문의하세요.");
+            } else {
+                throw new RuntimeException("올바르지 않은 로그인 정보입니다..");
+            }
         }
-
-        Member member = anymember.get();
-
-        if (member.getStatus() == MemberStatus.DELETED) {
-            throw new RuntimeException("탈퇴한 회원입니다.");
-        }
-
-        if (member.getStatus() == MemberStatus.SUSPENDED) {
-            throw new RuntimeException("정지된 회원입니다. 고객센터에 문의하세요.");
-        }
-
-//        return member.orElse(null);     // 회원 데이터가 있으면 해당 멤버를 리턴하고 없으면 NULL 리턴하여라
-        return member;
+        return null;
     }
-    
-    
+
+
     //회원 탈퇴 기능 처리
     @Transactional
     @Override
